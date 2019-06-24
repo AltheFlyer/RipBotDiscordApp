@@ -1,0 +1,9 @@
+# Rip-Bot-Discord-App
+
+IF you make any changes to existing files/modifications to base logic, please pull request for open source kindness :)
+
+Instructions on use:
+You will need a discord bot token, you can generate it at https://discordapp.com/developers/applications/ for your own purposes.
+`markov.py` contains all of the markov logic, note that it only works on one word at a time with `.generate()`.
+
+You may also want to change what environment variable is accessed in `app.py`.
