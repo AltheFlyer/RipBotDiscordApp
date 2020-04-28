@@ -16,21 +16,17 @@ def add_word(previous, word):
 
     if previous:
         previous = previous.strip()
-        if is_user_name(previous):
-            previous = "somebody"
     else:
         previous = START_OF_LINE
 
     if word:
         word = word.strip()
-        if is_user_name(word):
-            word = "somebody"
     else:
         word = END_OF_LINE
 
     # print(previous + " " + word)
 
-    #Get current number of words
+    # Get current number of words
     length = len(words)
 
     # print(markov_table)
@@ -41,14 +37,13 @@ def add_word(previous, word):
         for y in range(length):
             markov_table[y].append(0)
         markov_table.append([])
-        #New row
+        # New row
         for x in range(length + 1):
             markov_table[length].append(0)
 
         # print(markov_table)
         words.append(word)
         sum_array.append(0)
-
 
     # Add to markov
     previous_index = words.index(previous)
@@ -58,7 +53,7 @@ def add_word(previous, word):
     # increase stored sum for the previous word
     sum_array[previous_index] += 1
 
-    #print(markov_table)
+    # print(markov_table)
 
 
 def generate_next(word, count):
@@ -86,6 +81,3 @@ def generate_next(word, count):
 def generate():
     return generate_next(" ", 20)
 
-
-def is_user_name(string) -> bool:
-    return bool(re.match("<@[0-9]+>", string))
