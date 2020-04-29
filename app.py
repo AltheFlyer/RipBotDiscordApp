@@ -13,8 +13,13 @@ import markov
 TOKEN = os.environ.get('DISCORD_BOT_SECRET')
 
 prefix = "!rip "
-configs = {"dadword": "dad"}
+default_configs = {"dadword": "dad"}
+servers = {}
 bot = commands.Bot(command_prefix=prefix, help_command=None)
+
+
+async def is_mod(ctx):
+    return ctx.message.author.permissions_in(ctx.message.channel).manage_guild
 
 
 @bot.event
@@ -56,10 +61,18 @@ async def help(ctx):
     embed.set_footer(text="(Check it out on Github)")
     await ctx.send(embed=embed)
 
+
 @bot.group()
+@commands.check(is_mod)
 async def config(ctx):
     if ctx.invoked_subcommand is None:
         await ctx.send("No command sent...")
+
+
+@config.error
+async def config_error(ctx, error):
+    if commands.CheckFailure:
+        await ctx.send("You don't have the permissions to use that command!")
 
 
 @config.command()
@@ -69,8 +82,6 @@ async def thanos(ctx):
 
 @config.command()
 async def setvalue(ctx, arg1, *, args):
-    print(configs)
-    print(arg1)
     if arg1 in configs:
         configs[arg1] = args
         await ctx.send("Config successfully changed: " + arg1 + " -> " + args)
@@ -90,8 +101,6 @@ async def on_message(message):
         # Markov storage
         prevword = None
         for word in message.content.split():
-            print(word)
-
             markov.add_word(prevword, word)
             prevword = word
         markov.add_word(prevword, None)
@@ -107,5 +116,6 @@ async def on_message(message):
             print("A")
             dad_joke = message.content[im_index:]
             await message.channel.send("Hi '" + dad_joke + "', I'm " + configs["dadword"] + ".")
+
 
 bot.run(TOKEN)
