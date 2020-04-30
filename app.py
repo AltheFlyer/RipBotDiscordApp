@@ -15,6 +15,7 @@ TOKEN = os.environ.get('DISCORD_BOT_SECRET')
 prefix = "!rip "
 default_configs = {"dadword": "dad"}
 servers = {}
+configs = {"dadword": "dad"}
 bot = commands.Bot(command_prefix=prefix, help_command=None)
 
 
@@ -98,23 +99,26 @@ async def on_message(message):
         # Check for bot prefix, run command suite if present
         await bot.process_commands(message)
     else:
+        checks = ["i'm", "im", "I'm", "IM", "i am", "I am", "I AM"]
+        dad_out = ""
+        can_dad = False
+
         # Markov storage
         prevword = None
         for word in message.content.split():
+            if can_dad:
+                dad_out += word + " "
+            for term in checks:
+                if term == word:
+                    can_dad = True
+                    dad_out = ""
+
             markov.add_word(prevword, word)
             prevword = word
         markov.add_word(prevword, None)
 
-        # Colin features
-        checks = ["im", "I'm", "IM", "i am", "I am", "I AM"]
-        im_index = -1
-        for term in checks:
-            if term in message.content:
-                im_index = message.content.rindex(term) + len(term) + 1
-
-        if im_index > -1:
-            print("A")
-            dad_joke = message.content[im_index:]
+        if dad_out:
+            dad_joke = dad_out[:-1]
             await message.channel.send("Hi '" + dad_joke + "', I'm " + configs["dadword"] + ".")
 
 
